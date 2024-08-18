@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col md:flex-row md:px-16 pt-56">
-        <div className="flex flex-col w-full md:w-1/2 mb-8 md:mb-0">
+      <div className="flex flex-col pt-44 px-24 items-center justify-center md:flex-row">
+        <div className="flex flex-col w-full md:w-1/2 mb-8 gap-x-4">
           <h1 className="text-4xl md:text-6xl mb-4 text-black">
             Mulailah <span className="font-bold">karir IT</span>{" "}
             <span className="font-bold">impianmu</span> dari sini!
