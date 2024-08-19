@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { rolesAndSkills } from "@/data/rolesAndSkills";
+import { roles, skills } from "@/data/rolesAndSkills";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="pb-8">
       <Navbar />
       <h1 className="flex justify-center text-4xl font-bold mb-8 pt-32 text-black">
         Pilih Karir IT Ambisimu!
@@ -20,32 +20,32 @@ export default function Home() {
 
       {/* Role-based Section */}
       <div className="px-8 lg:px-16">
-        <h2 className="text-2xl font-bold text-black mb-4">Role-based</h2>
-        <div className="grid grid-cols-3 gap-4">
-          {rolesAndSkills.slice(0, 12).map((role) => (
+        <h2 className="text-2xl font-bold text-black underline mb-4">Role-based</h2>
+        <div className="grid grid-cols-4 gap-4">
+          {roles.map((role) => (
             <button
               key={role.id}
               onClick={() => handleRedirect(role.id)}
               className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
             >
-              {role.name}
+              {role.nama}
             </button>
           ))}
         </div>
         {/* Skill-based Section */}
-        <h2 className="text-2xl font-bold text-black mb-4 pt-8">Skill-based</h2>
-        <div className="grid grid-cols-3 gap-4">
-          {rolesAndSkills.slice(12).map((skill) => (
+        <h2 className="text-2xl font-bold text-black underline mb-4 pt-8">Skill-based</h2>
+        <div className="grid grid-cols-4 gap-4">
+          {skills.map((skill) => (
             <button
               key={skill.id}
               onClick={() => handleRedirect(skill.id)}
               className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
             >
-              {skill.name}
+              {skill.nama}
             </button>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
