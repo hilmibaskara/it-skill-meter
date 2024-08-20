@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white shadow-md px-12 md:px-16">
+    <nav className="fixed top-0 left-0 right-0 bg-white shadow-md px-12 md:px-16 z-50">
       <div className="container mx-auto flex justify-between items-center py-4">
         {/* Logo Section */}
         <a href="/" className="flex items-center">
@@ -19,7 +19,7 @@ const Navbar = () => {
             Interview
           </Link>
           <Link
-            href="/interview"
+            href="/rekap-hasil"
             className="font-medium text-black text-center py-2 hover:underline"
           >
             Hasil

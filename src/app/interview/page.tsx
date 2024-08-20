@@ -8,7 +8,7 @@ export default function Home() {
 
   // Function to handle redirection on button click
   const handleRedirect = (id: number) => {
-    router.push(`/interview/getting-started/${id}`);
+    router.push(`/interview/${id}`);
   };
 
   return (
