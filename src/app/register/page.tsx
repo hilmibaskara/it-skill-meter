@@ -1,4 +1,36 @@
+'use client';
+
+import { useState } from 'react';
+import { signup } from '../login/actions';
+
 const Register = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Ensure password and confirm password match
+    if (password !== confirmPassword) {
+      console.error('Passwords do not match');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+
+    try {
+      await signup(formData);
+      console.log('Registration successful');
+      // Redirect or update the UI after successful registration
+    } catch (error) {
+      console.error('Registration failed:', error);
+      // Handle registration error (e.g., show an error message)
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen items-center justify-center">
       <a
@@ -13,7 +45,7 @@ const Register = () => {
           <h1 className="text-xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-2xl">
             Register Akun
           </h1>
-          <form className="space-y-4 md:space-y-6" action="#">
+          <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-900">
                 Email
@@ -25,6 +57,8 @@ const Register = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                 placeholder="name@company.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -38,6 +72,8 @@ const Register = () => {
                 placeholder="••••••••"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div>
@@ -51,6 +87,8 @@ const Register = () => {
                 placeholder="••••••••"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                 required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
             <button
@@ -60,7 +98,7 @@ const Register = () => {
               Register akun
             </button>
             <p className="text-sm font-light text-gray-500">
-              Sudah punya akun?{" "}
+              Sudah punya akun?{' '}
               <a
                 href="/login"
                 className="font-medium text-primary-red hover:underline"

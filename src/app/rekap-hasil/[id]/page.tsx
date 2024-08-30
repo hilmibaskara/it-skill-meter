@@ -1,8 +1,8 @@
 "use client"
-import Navbar from "@/components/Navbar";
-import Tabs from "@/components/Tabs";
-import { hasilData } from "@/data/hasilData";
-import CardKomponenHasil from "@/components/CardKomponenHasil";
+import Navbar from "@/src/components/Navbar";
+import Tabs from "@/src/components/Tabs";
+import { hasilData } from "@/src/data/hasilData";
+import CardKomponenHasil from "@/src/components/CardKomponenHasil";
 
 export default function RekapHasilPage({ params }) {
   const { id } = params;

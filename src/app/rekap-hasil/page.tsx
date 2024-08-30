@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react";
-import CardRekapHasil from "@/components/CardRekapHasil";
-import Navbar from "@/components/Navbar";
-import { hasilData } from "@/data/hasilData";
+import CardRekapHasil from "@/src/components/CardRekapHasil";
+import Navbar from "@/src/components/Navbar";
+import { hasilData } from "@/src/data/hasilData";
 
 export default function Home() {
   const [filter, setFilter] = useState("All"); // State for filtering

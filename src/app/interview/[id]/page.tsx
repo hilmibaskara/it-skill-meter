@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { roles, skills } from "@/data/rolesAndSkills";
-import Navbar from "@/components/Navbar";
+import { roles, skills } from "@/src/data/rolesAndSkills";
+import Navbar from "@/src/components/Navbar";
 
 export default function InterviewDetail({
   params,
