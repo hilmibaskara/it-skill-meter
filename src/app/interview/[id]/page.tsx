@@ -1,98 +1,120 @@
-'use client'
-import { useState } from "react";
+'use client';
+
+import { useState, useRef } from "react";
+import { HiSpeakerWave } from "react-icons/hi2";
+import { FaMicrophone } from "react-icons/fa";
 import Navbar from "@/src/components/Navbar";
-import CardDuration from "@/src/components/CardDuration";
-import CardInstruction from "@/src/components/CardInstruction";
-import { roles, skills } from "@/src/data/rolesAndSkills";
 
-export default function InterviewDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
-  const [currentStep, setCurrentStep] = useState<"none" | "instruction" | "duration">("none");
-  const [language, setLanguage] = useState<string>("");
-  const [duration, setDuration] = useState<string>("");
+export default function InterviewDetail({ params }: { params: { id: string }; }) {
+  const [recording, setRecording] = useState(false);
+  const [videoURL, setVideoURL] = useState<string | null>(null);
+  const [recognitionResult, setRecognitionResult] = useState<string>('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [chunks, setChunks] = useState<Blob[]>([]);
 
-  // Combine roles and skills data
-  const combinedData = [...roles, ...skills];
+  // Start Video Recording
+  const handleStartRecording = async () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
 
-  // Find data by id
-  const data = combinedData.find((item) => item.id === parseInt(id as string));
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      setChunks([]);
 
-  // Handle data not found
-  if (!data) {
-    return (
-      <div>
-        <Navbar />
-        <h1 className="text-center text-2xl mt-32">Data tidak ditemukan</h1>
-      </div>
-    );
-  }
+      mediaRecorder.ondataavailable = (e) => {
+        setChunks((prev) => [...prev, e.data]);
+      };
 
-  // Handlers for navigating between steps
-  const handleStart = () => {
-    setCurrentStep("instruction");
-  };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        setVideoURL(url);
+      };
 
-  const handleNextFromInstruction = () => {
-    setCurrentStep("duration");
-  };
-
-  const handleNextFromDuration = (selectedLanguage: string, selectedDuration: string) => {
-    setLanguage(selectedLanguage);
-    setDuration(selectedDuration);
-    console.log("Selected Language:", selectedLanguage);
-    console.log("Selected Duration:", selectedDuration);
-    setCurrentStep("none");
-  };
-
-  const handleBack = () => {
-    if (currentStep === "duration") {
-      setCurrentStep("instruction");
-    } else if (currentStep === "instruction") {
-      setCurrentStep("none");
+      mediaRecorder.start();
+      setRecording(true);
     }
   };
 
-  // Render based on the current step
-  if (currentStep === "instruction") {
-    return <CardInstruction onNext={handleNextFromInstruction} onBack={handleBack} />;
-  }
+  // Stop Video Recording
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
+  };
 
-  if (currentStep === "duration") {
-    return (
-      <CardDuration
-        language={language}
-        duration={duration}
-        onNext={handleNextFromDuration}
-        onBack={handleBack}
-      />
-    );
-  }
+  // Text to Speech
+  const handleTextToSpeech = () => {
+    const utterance = new SpeechSynthesisUtterance("This is an example of text to speech.");
+    window.speechSynthesis.speak(utterance);
+  };
 
-  // Default render for the initial step
+  // Speech to Text
+  const handleSpeechToText = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.start();
+
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const transcript = event.results[0][0].transcript;
+        setRecognitionResult(transcript);
+      };
+    } else {
+      console.error("Speech Recognition API not supported in this browser.");
+    }
+  };
+
   return (
     <div className="pt-32 md:h-screen">
       <Navbar />
-      <div className="flex flex-col px-12 md:flex-row">
-        <div className="flex flex-col w-full md:w-1/2 mb-8 gap-x-4">
-          <h1 className="text-4xl md:text-6xl mb-4 text-black font-bold">
-            {data.nama}
-          </h1>
-          <p className="text-gray-500 text-lg md:text-xl mb-6">
-            {data.deskripsi}
-          </p>
-          <button
-            onClick={handleStart}
-            className="bg-primary-red text-white px-6 py-3 rounded-xl font-semibold w-24 text-center"
-          >
-            Mulai
-          </button>
+      <div className="bg-white w-[530px] h-[676px] mx-auto p-7 rounded-xl">
+        {/* Video Player */}
+        <div className="w-[400px] h-[300px] bg-[#808080] mx-auto mt-10">
+          <video ref={videoRef} autoPlay className="w-full h-full" />
+          {videoURL && <video src={videoURL} controls className="w-full h-full mt-4" />}
         </div>
-        <div className="w-full md:w-1/2 flex justify-center md:justify-end items-start">
-          <img src="/icons/desk-started.svg" alt="Icon" className="w-72" />
+        <div className="flex flex-row justify-between px-[120px] pt-8">
+          {/* Text to Speech */}
+          <HiSpeakerWave
+            className="p-4 bg-[#d9d9d9] text-black w-[60px] h-[60px] rounded-full cursor-pointer"
+            onClick={handleTextToSpeech}
+          />
+          {/* Speech to Text */}
+          <FaMicrophone
+            className="p-4 bg-[#d9d9d9] text-black w-[60px] h-[60px] rounded-full cursor-pointer"
+            onClick={handleSpeechToText}
+          />
+        </div>
+        <div className="mt-[20px] text-center">
+          {recording ? (
+            <button onClick={handleStopRecording} className="m-2 rounded-md bg-[#e6545f] text-white px-4 py-2">
+              Stop Recording
+            </button>
+          ) : (
+            <button onClick={handleStartRecording} className="m-2 rounded-md bg-[#e6545f] text-white px-4 py-2">
+              Start Recording
+            </button>
+          )}
+          <p className="mt-4">{recognitionResult}</p>
+        </div>
+        <div >
+          <hr className="my-4 border-black" />
+          <div className="flex flex-row justify-between">
+            <button className="m-2 rounded-md border border-[#7f7f7f] px-4 py-2 text-[#7f7f7f]">
+              Batal
+            </button>
+            <button onClick={handleStartRecording} className="m-2 rounded-md bg-[#e6545f] text-white px-4 py-2">
+              Lanjut
+            </button>
+          </div>
         </div>
       </div>
     </div>
